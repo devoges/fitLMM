@@ -64,7 +64,7 @@ fit_lmer <- function(Y,
                                X))
   reTrms <- myReTrms(Zlist, NULL)
   reTrms$Zt <- as(reTrms$Zt, "dgCMatrix")
-  devfun <- mkLmerDevfun(fr, X, reTrms)
+  devfun <- mkLmerDevfun(fr, X, reTrms, REML = REML)
   opt <- optimizeLmer(devfun)
   model <- mkMerMod(environment(devfun), opt, reTrms, fr = fr)
 

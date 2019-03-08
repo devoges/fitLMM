@@ -2,7 +2,8 @@
 #' @importFrom GMMAT glmmkin
 fit_gmmat <- function(Y,
                       X,
-                      Slist) {
+                      Slist,
+                      REML = TRUE) {
   n <- nrow(X)
   data <- as.data.frame(X)
   data$Y <- Y
@@ -15,12 +16,15 @@ fit_gmmat <- function(Y,
   })
   names(Slist_new) <- names(Slist)
 
-  model <- glmmkin(fixed = Y ~ -1 + . - id,
-                   data = data,
+  method <- ifelse(REML, "REML", "ML")
+
+  model <- glmmkin(fixed  = Y ~ -1 + . - id,
+                   data   = data,
                    family = gaussian(),
-                   kins = Slist_new,
-                   tol = .Machine$double.eps^0.5,
-                   id = "id")
+                   kins   = Slist_new,
+                   tol    = .Machine$double.eps^0.5,
+                   id     = "id",
+                   method = method)
   vcs <- setNames(model$theta, c("Error", names(Slist)))
   vcs <- vcs[order(names(vcs))]
   beta <- setNames(model$coefficients, colnames(X))
