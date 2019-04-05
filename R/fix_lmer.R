@@ -75,8 +75,9 @@ fit_lmer <- function(Y,
   vcs <- setNames(foo$vcov, foo$var1)
   vcs <- vcs[order(names(vcs))]
 
-  list("type" = "lm4",
+  list("type" = "lme4",
        "model" = model,
        "beta" = beta,
-       "vcs" = vcs)
+       "vcs" = vcs,
+       "method" = ifelse(REML, "REML", "ML"))
 }

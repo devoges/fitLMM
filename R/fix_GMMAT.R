@@ -29,8 +29,9 @@ fit_gmmat <- function(Y,
   vcs <- vcs[order(names(vcs))]
   beta <- setNames(model$coefficients, colnames(X))
 
-  list("type" = "lm4",
+  list("type" = "GMMAT",
        "model" = model,
        "beta" = beta,
-       "vcs" = vcs)
+       "vcs" = vcs,
+       "method" = method)
 }
