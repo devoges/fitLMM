@@ -69,15 +69,24 @@ fit_lmer <- function(Y,
   model <- mkMerMod(environment(devfun), opt, reTrms, fr = fr)
 
   beta <- getME(model, name = "fixef")
+  beta <- beta[order(names(beta))]
+
   foo <- as.data.frame(VarCorr(model))[, c("var1", "vcov")] %>%
     mutate(var1 = case_when(is.na(var1) ~ "Error",
                             TRUE ~ var1))
   vcs <- setNames(foo$vcov, foo$var1)
   vcs <- vcs[order(names(vcs))]
 
+  ll_REML <- logLik(model, REML = TRUE)[1]
+  ll_ML <- logLik(model, REML = FALSE)[1]
+  rss <- unname(getME(model, "devcomp")$cmp["pwrss"])
+
   list("type" = "lme4",
        "model" = model,
        "beta" = beta,
        "vcs" = vcs,
+       "ll_REML" = ll_REML,
+       "ll_ML" = ll_ML,
+       "rss" = rss,
        "method" = ifelse(REML, "REML", "ML"))
 }

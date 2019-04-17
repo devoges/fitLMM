@@ -1,3 +1,9 @@
+det <- function(x) {
+  r <- determinant(x)$modulus
+  attr(r, "logarithm") <- NULL
+  r
+}
+
 #' @export
 #' @importFrom GMMAT glmmkin
 fit_gmmat <- function(Y,
@@ -28,10 +34,27 @@ fit_gmmat <- function(Y,
   vcs <- setNames(model$theta, c("Error", names(Slist)))
   vcs <- vcs[order(names(vcs))]
   beta <- setNames(model$coefficients, colnames(X))
+  beta <- beta[order(names(beta))]
+
+  v <- lapply(names(vcs) %>% remove_these("Error"),
+              function(l) (vcs[l]/vcs["Error"]) * Slist[[l]]) %>%
+    Reduce("+", .)
+  diag(v) <- diag(v) + 1
+  vinv <- solve(v)
+  r <- Y - X %*% beta
+  rss <- {t(r) %*% vinv %*% r}[1, 1]
+  lnum <- log(2 * pi * rss)
+  d <- det(v)
+  dd <- det(t(X) %*% vinv %*% X)
+  ll_REML <- -1 * (d + dd + (nrow(X) - ncol(X)) * (1 + lnum - log(nrow(X) - ncol(X)))) / 2
+  ll_ML <-  -1 * (d + nrow(X) * (1 + lnum - log(nrow(X)))) / 2
 
   list("type" = "GMMAT",
        "model" = model,
        "beta" = beta,
        "vcs" = vcs,
+       "rss" = rss,
+       "ll_REML" = ll_REML,
+       "ll_ML" = ll_ML,
        "method" = method)
 }
