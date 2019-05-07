@@ -10,6 +10,7 @@ fit_lm <- function(Y,
                    REML = TRUE) {
   model <- lm(Y ~ -1 + .,
               data = as.data.frame(X))
+  X <- as.matrix(X)
   beta <- model$coefficients
   r <- Y - X %*% beta
   rss <- {t(r) %*% r}[1, 1]
