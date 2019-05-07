@@ -14,7 +14,7 @@ fit_lm <- function(Y,
   beta <- model$coefficients
   r <- Y - X %*% beta
   rss <- {t(r) %*% r}[1, 1]
-  if (REML) {
+  if (!REML) {
     vcs <- c("Error" = rss / nrow(X))
   } else {
     vcs <- c("Error" = rss / (nrow(X) - ncol(X)))
