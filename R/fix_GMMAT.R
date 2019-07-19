@@ -32,9 +32,9 @@ fit_gmmat <- function(Y,
                    id     = "id",
                    method = method)
   vcs <- setNames(model$theta, c("Error", names(Slist)))
-  vcs <- vcs[order(names(vcs))]
+  #vcs <- vcs[order(names(vcs))]
   beta <- setNames(model$coefficients, colnames(X))
-  beta <- beta[order(names(beta))]
+  #beta <- beta[order(names(beta))]
 
   v <- lapply(names(vcs) %>% remove_these("Error"),
               function(l) (vcs[l]/vcs["Error"]) * Slist[[l]]) %>%
