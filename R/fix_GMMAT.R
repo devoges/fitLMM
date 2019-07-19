@@ -41,7 +41,7 @@ fit_gmmat <- function(Y,
     Reduce("+", .)
   diag(v) <- diag(v) + 1
   vinv <- solve(v)
-  r <- Y - X %*% beta
+  r <- Y - as.matrix(X) %*% beta
   rss <- {t(r) %*% vinv %*% r}[1, 1]
   lnum <- log(2 * pi * rss)
   d <- det(v)
